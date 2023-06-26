@@ -21,20 +21,18 @@ public class ActivateUser extends HttpServlet {
         String email = req.getParameter("email");
         String activationCode = req.getParameter("activationCode");
         Optional<AuthUser> optionalAuthUser = authUserDAO.emailAndActivationCode(email, activationCode);
-        if (!optionalAuthUser.isPresent()) {
-            req.setAttribute("error_message", "Email not activated 🤢🤢🤢🤢🤢🤢");
-            RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/user/activate.jsp");
-            requestDispatcher.forward(req, resp);
-        }
-        boolean result = authUserDAO.editStatusUser(email);
-        if (result) {
-            req.setAttribute("error_message", "Accaunt verifying 👍👍👍👍👍👍");
-            RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/user/activate.jsp");
-            requestDispatcher.forward(req, resp);
+        if (optionalAuthUser.isPresent()) {
+            req.setAttribute("error_message", "Email activated 👍👍👍👍👍👍");
+            boolean result = authUserDAO.updateUserStatus(email);
+            if (result) {
+                req.setAttribute("error_message", "Accaunt verifying 👍👍👍👍👍👍");
+                RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/user/activate.jsp");
+                requestDispatcher.forward(req, resp);
+            }else {
+                resp.getWriter().write("🤢🤢🤢🤢 not found");
+            }
         }else {
-            resp.getWriter().write("O'zgartira olmadik");
+            resp.getWriter().write("🤢🤢🤢🤢 not found");
         }
-
-
     }
 }

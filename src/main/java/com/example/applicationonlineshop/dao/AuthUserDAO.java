@@ -18,7 +18,6 @@ public class AuthUserDAO extends BaseDAO<AuthUser, Integer> {
             commit();
             return Optional.ofNullable(user);
         } catch (Exception e) {
-//            e.printStackTrace();
             rollback();
             return Optional.empty();
         }
@@ -31,16 +30,18 @@ public class AuthUserDAO extends BaseDAO<AuthUser, Integer> {
                                     "where t.email=:email and t.activationCode=:activationCode",AuthUser.class)
                     .setParameter("email", email)
                     .setParameter("activationCode", activationCode).getSingleResult();
-            commit();
+
             return Optional.ofNullable(authUser);
         } catch (Exception e) {
             rollback();
             return Optional.empty();
+        }finally {
+            commit();
         }
 
     }
 
-    public Optional<AuthUser> existsEmailAndActivateCode(String email, String activatedCode) {
+    /*public Optional<AuthUser> existsEmailAndActivateCode(String email, String activatedCode) {
         begin();
         AuthUser user = entityManager.find(AuthUser.class, email);
         if (user.getActivationCode().equals(activatedCode) && user.getEmail().equals(email)) {
@@ -50,9 +51,9 @@ public class AuthUserDAO extends BaseDAO<AuthUser, Integer> {
             rollback();
             return Optional.empty();
         }
-    }
+    }*/
 
-    public boolean editStatusUser(String email) {
+    /*public boolean editStatusUser(String email) {
         try {
             begin();
             AuthUser user = entityManager.find(AuthUser.class, email);
@@ -63,7 +64,7 @@ public class AuthUserDAO extends BaseDAO<AuthUser, Integer> {
             rollback();
             return false;
         }
-    }
+    }*/
 
     /*public Optional<AuthUser> existsEmailAndActivationCode(String email, String activationCode) {
         try {
@@ -86,11 +87,26 @@ public class AuthUserDAO extends BaseDAO<AuthUser, Integer> {
             begin();
             entityManager.createQuery("update AuthUser t set status='ACTIVE' where t.email=:email").
                     setParameter("email", email);
-            commit();
             return true;
         } catch (Exception e) {
             rollback();
             return false;
+        }finally {
+            commit();
+        }
+
+    }
+
+    public boolean editStatus(String email) {
+        try {
+            begin();
+            
+            return true;
+        } catch (Exception e) {
+            rollback();
+            return false;
+        }finally {
+            commit();
         }
 
     }
